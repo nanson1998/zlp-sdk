@@ -16,7 +16,7 @@ type CreateOrderRequest struct {
 	Description string `json:"description" url:"description"`
 	EmbedData   string `json:"embed_data" url:"embed_data"`
 	BankCode    string `json:"bank_code" url:"bank_code"`
-	Mac         string `json:"mac" url:"mac"`
+	MacKey      string `json:"mac" url:"mac"`
 	CallbackURL string `json:"callback_url" url:"callback_url"`
 	DeviceInfo  string `json:"device_info" url:"device_info"`
 	SubAppID    string `json:"sub_app_id" url:"sub_app_id"`
@@ -42,7 +42,7 @@ type CreateOrderResponse struct {
 type QueryStatusRequest struct {
 	AppID      int    `json:"app_id" url:"app_id"`
 	AppTransID string `json:"app_trans_id" url:"app_trans_id"`
-	Mac        string `json:"mac" url:"mac"`
+	MacKey     string `json:"mac" url:"mac"`
 }
 
 type QueryStatusResponse struct {

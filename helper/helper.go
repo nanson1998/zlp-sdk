@@ -1,31 +1,24 @@
 package helper
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
-	"math/rand"
+	"strings"
 	"time"
 )
 
-var DefaultId = 0
+var (
+	PROD      = "https://openapi.zalopay.vn"
+	SB        = "https://sb-openapi.zalopay.vn"
+	DefaultId = 0
+)
 
 func init() {
 	DefaultId = 1
 }
 
-func GetTransID(apptime int64) string {
-	DefaultId = rand.Intn(1000000)
-
-	DefaultId += 1
-	t := time.Now().Format("150405") //HH:mm:ss
-	return fmt.Sprintf("%v_%v%05d", GetTimeString(apptime), t, DefaultId)
-}
-func GetTransIDKYC(apptime int64) string {
-	DefaultId = rand.Intn(100)
-
-	DefaultId += 1
-	t := time.Now().Format("1") //HH:mm:ss
-	return fmt.Sprintf("%v%v%02d", GetTimeString(apptime), t, DefaultId)
-}
 func GetAppTime() int64 {
 	return time.Now().UnixNano() / int64(time.Millisecond)
 }
@@ -44,4 +37,15 @@ func GetMRefundId(appid string, apptime int64) string {
 	DefaultId += 1
 	t := time.Now().Format("150405")
 	return fmt.Sprintf("%v_%v_%v%05d", GetTimeString(apptime), appid, t, DefaultId)
+}
+
+func BuildMAC(key string, sep string, params ...interface{}) string {
+	var str []string
+	for _, p := range params {
+		str = append(str, fmt.Sprint(p))
+	}
+	h := hmac.New(sha256.New, []byte(key))
+	h.Write([]byte(strings.Join(str, sep)))
+
+	return hex.EncodeToString(h.Sum(nil))
 }

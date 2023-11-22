@@ -1,4 +1,4 @@
-package agreement_wallet
+package agreement
 
 import (
 	"github.com/google/go-querystring/query"

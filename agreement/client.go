@@ -1,4 +1,4 @@
-package agreement_wallet
+package agreement
 
 import (
 	"encoding/json"
@@ -8,7 +8,9 @@ import (
 	"net/http"
 )
 
-func CreateBinding(req *CreateBindingRequest) (*CreateBindingResponse, error) {
+var endpoint = helper.SB
+
+func CreateBinding(req *CreateBindingRequest, isProduction bool) (*CreateBindingResponse, error) {
 	t := helper.GetAppTime()
 	prefixDate := helper.GetTimeString(t)
 	if req.AppTransID[:6] != prefixDate {
@@ -31,7 +33,10 @@ func CreateBinding(req *CreateBindingRequest) (*CreateBindingResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, err := http.PostForm("https://sb-openapi.zalopay.vn/v2/agreement/bind", createReq)
+	if isProduction == true {
+		endpoint = helper.PROD
+	}
+	res, err := http.PostForm(endpoint+"/v2/agreement/bind", createReq)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,7 +51,7 @@ func CreateBinding(req *CreateBindingRequest) (*CreateBindingResponse, error) {
 
 }
 
-func QueryBinding(req *QuerybindingRequest) (*QueryBindingResponse, error) {
+func QueryBinding(req *QuerybindingRequest, isProduction bool) (*QueryBindingResponse, error) {
 	t := helper.GetAppTime()
 	// calculate mac
 	mac := helper.BuildMAC(req.MacKey, "|", req.AppID, req.AppTransID, t)
@@ -60,7 +65,10 @@ func QueryBinding(req *QuerybindingRequest) (*QueryBindingResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, err := http.PostForm("https://sb-openapi.zalopay.vn/v2/agreement/query", queryReq)
+	if isProduction == true {
+		endpoint = helper.PROD
+	}
+	res, err := http.PostForm(endpoint+"/v2/agreement/query", queryReq)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -74,7 +82,7 @@ func QueryBinding(req *QuerybindingRequest) (*QueryBindingResponse, error) {
 	return &createRes, nil
 }
 
-func QueryBalance(req *QueryBalanceRequest) (*QueryBalanceResponse, error) {
+func QueryBalance(req *QueryBalanceRequest, isProduction bool) (*QueryBalanceResponse, error) {
 	t := helper.GetAppTime()
 	// calculate mac
 	mac := helper.BuildMAC(req.MacKey, "|", req.AppID, req.PayToken, req.Identifier, req.Amount, t)
@@ -90,7 +98,10 @@ func QueryBalance(req *QueryBalanceRequest) (*QueryBalanceResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, err := http.PostForm("https://sb-openapi.zalopay.vn/v2/agreement/balance", queryReq)
+	if isProduction == true {
+		endpoint = helper.PROD
+	}
+	res, err := http.PostForm(endpoint+"/v2/agreement/balance", queryReq)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -104,7 +115,7 @@ func QueryBalance(req *QueryBalanceRequest) (*QueryBalanceResponse, error) {
 	return &createRes, nil
 }
 
-func PayByToken(req *PayByTokenRequest) (*PayByTokenResponse, error) {
+func PayByToken(req *PayByTokenRequest, isProduction bool) (*PayByTokenResponse, error) {
 	t := helper.GetAppTime()
 	// calculate mac
 	mac := helper.BuildMAC(req.MacKey, "|", req.AppID, req.Identifier, req.ZpTransToken, req.PayToken, t)
@@ -121,7 +132,10 @@ func PayByToken(req *PayByTokenRequest) (*PayByTokenResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, err := http.PostForm("https://sb-openapi.zalopay.vn/v2/agreement/pay", queryReq)
+	if isProduction == true {
+		endpoint = helper.PROD
+	}
+	res, err := http.PostForm(endpoint+"/v2/agreement/pay", queryReq)
 	if err != nil {
 		log.Fatal(err)
 	}

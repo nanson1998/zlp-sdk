@@ -9,7 +9,9 @@ import (
 	"strconv"
 )
 
-func RefundOrder(req *CreateRefundRequest) (*CreateRefundResponse, error) {
+var endpoint = helper.SB
+
+func RefundOrder(req *CreateRefundRequest, isProduction bool) (*CreateRefundResponse, error) {
 	t := helper.GetAppTime()
 	prefixDate := helper.GetTimeString(t)
 	prefixMRefundId := prefixDate + "_" + strconv.Itoa(req.AppID)
@@ -30,7 +32,10 @@ func RefundOrder(req *CreateRefundRequest) (*CreateRefundResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, err := http.PostForm("https://sb-openapi.zalopay.vn/v2/refund", createReq)
+	if isProduction == true {
+		endpoint = helper.PROD
+	}
+	res, err := http.PostForm(endpoint+"/v2/refund", createReq)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,7 +50,7 @@ func RefundOrder(req *CreateRefundRequest) (*CreateRefundResponse, error) {
 	return &response, nil
 }
 
-func QueryRefund(req *QueryRefundRequest) (*QueryRefundResponse, error) {
+func QueryRefund(req *QueryRefundRequest, isProduction bool) (*QueryRefundResponse, error) {
 	t := helper.GetAppTime()
 	mac := helper.BuildMAC(req.MacKey, "|", req.AppID, req.MRefundID, t)
 	r := &QueryRefundRequest{
@@ -59,7 +64,10 @@ func QueryRefund(req *QueryRefundRequest) (*QueryRefundResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, err := http.PostForm("https://sb-openapi.zalopay.vn/v2/query_refund", queryReq)
+	if isProduction == true {
+		endpoint = helper.PROD
+	}
+	res, err := http.PostForm(endpoint+"/v2/query_refund", queryReq)
 	if err != nil {
 		log.Fatal(err)
 	}

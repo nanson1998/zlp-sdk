@@ -8,7 +8,9 @@ import (
 	"net/http"
 )
 
-func CreateOrder(req *CreateOrderRequest) (*CreateOrderResponse, error) {
+var endpoint = helper.SB
+
+func CreateOrder(req *CreateOrderRequest, isProduction bool) (*CreateOrderResponse, error) {
 	t := helper.GetAppTime()
 	prefixDate := helper.GetTimeString(t)
 	if req.AppTransID[:6] != prefixDate {
@@ -35,7 +37,10 @@ func CreateOrder(req *CreateOrderRequest) (*CreateOrderResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, err := http.PostForm("https://sb-openapi.zalopay.vn/v2/create", createReq)
+	if isProduction == true {
+		endpoint = helper.PROD
+	}
+	res, err := http.PostForm(endpoint+"/v2/create", createReq)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -52,7 +57,7 @@ func CreateOrder(req *CreateOrderRequest) (*CreateOrderResponse, error) {
 	return &response, nil
 }
 
-func QueryOrder(req *QueryStatusRequest) (*QueryStatusResponse, error) {
+func QueryOrder(req *QueryStatusRequest, isProduction bool) (*QueryStatusResponse, error) {
 	mac := helper.BuildMAC(req.MacKey, "|", req.AppID, req.AppTransID, req.MacKey)
 
 	r := &QueryStatusRequest{
@@ -65,7 +70,10 @@ func QueryOrder(req *QueryStatusRequest) (*QueryStatusResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, err := http.PostForm("https://sb-openapi.zalopay.vn/v2/query", queryReq)
+	if isProduction == true {
+		endpoint = helper.PROD
+	}
+	res, err := http.PostForm(endpoint+"/v2/query", queryReq)
 	if err != nil {
 		log.Fatal(err)
 	}

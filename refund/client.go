@@ -2,7 +2,7 @@ package refund
 
 import (
 	"encoding/json"
-	helper2 "github.com/nanson1998/zlp-sdk/helper"
+	"github.com/nanson1998/zlp-sdk/helper"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -10,8 +10,8 @@ import (
 )
 
 func RefundOrder(req *CreateRefundRequest) (*CreateRefundResponse, error) {
-	t := helper2.GetAppTime()
-	prefixDate := helper2.GetTimeString(t)
+	t := helper.GetAppTime()
+	prefixDate := helper.GetTimeString(t)
 	prefixMRefundId := prefixDate + "_" + strconv.Itoa(req.AppID)
 	l := 7 + len(strconv.Itoa(req.AppID))
 	if req.MRefundID[:l] != prefixMRefundId {
@@ -22,7 +22,7 @@ func RefundOrder(req *CreateRefundRequest) (*CreateRefundResponse, error) {
 			SubReturnMessage: "m_refund_id phải bắt đầu bằng:" + prefixMRefundId,
 		}, nil
 	}
-	mac := helper2.BuildMAC(req.MacKey, "|", req.AppID, req.ZPTransID, req.Amount, req.Description, t)
+	mac := helper.BuildMAC(req.MacKey, "|", req.AppID, req.ZPTransID, req.Amount, req.Description, t)
 	req.MacKey = mac
 	req.Timestamp = t
 
@@ -46,8 +46,8 @@ func RefundOrder(req *CreateRefundRequest) (*CreateRefundResponse, error) {
 }
 
 func QueryRefund(req *QueryRefundRequest) (*QueryRefundResponse, error) {
-	t := helper2.GetAppTime()
-	mac := helper2.BuildMAC(req.MacKey, "|", req.AppID, req.MRefundID, t)
+	t := helper.GetAppTime()
+	mac := helper.BuildMAC(req.MacKey, "|", req.AppID, req.MRefundID, t)
 	r := &QueryRefundRequest{
 		AppID:     req.AppID,
 		MRefundID: req.MRefundID,

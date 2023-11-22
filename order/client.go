@@ -2,15 +2,15 @@ package order
 
 import (
 	"encoding/json"
-	helper2 "github.com/nanson1998/zlp-sdk/helper"
+	"github.com/nanson1998/zlp-sdk/helper"
 	"io/ioutil"
 	"log"
 	"net/http"
 )
 
 func CreateOrder(req *CreateOrderRequest) (*CreateOrderResponse, error) {
-	t := helper2.GetAppTime()
-	prefixDate := helper2.GetTimeString(t)
+	t := helper.GetAppTime()
+	prefixDate := helper.GetTimeString(t)
 	if req.AppTransID[:6] != prefixDate {
 		return &CreateOrderResponse{
 			ReturnCode:       2,
@@ -27,7 +27,7 @@ func CreateOrder(req *CreateOrderRequest) (*CreateOrderResponse, error) {
 		req.EmbedData = "{}"
 	}
 	// calculate mac
-	mac := helper2.BuildMAC(req.MacKey, "|", req.AppID, req.AppTransID, req.AppUser, req.Amount, t, req.EmbedData, req.Item)
+	mac := helper.BuildMAC(req.MacKey, "|", req.AppID, req.AppTransID, req.AppUser, req.Amount, t, req.EmbedData, req.Item)
 	req.MacKey = mac
 	req.AppTime = t
 
@@ -53,7 +53,7 @@ func CreateOrder(req *CreateOrderRequest) (*CreateOrderResponse, error) {
 }
 
 func QueryOrder(req *QueryStatusRequest) (*QueryStatusResponse, error) {
-	mac := helper2.BuildMAC(req.MacKey, "|", req.AppID, req.AppTransID, req.MacKey)
+	mac := helper.BuildMAC(req.MacKey, "|", req.AppID, req.AppTransID, req.MacKey)
 
 	r := &QueryStatusRequest{
 		AppID:      req.AppID,

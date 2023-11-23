@@ -28,10 +28,11 @@ type CreateBindingResponse struct {
 }
 
 type QuerybindingRequest struct {
-	AppID      int    `json:"app_id" url:"app_id"`
-	AppTransID string `json:"app_trans_id" url:"app_trans_id"`
-	ReqDate    int64  `json:"req_date"  url:"req_date"`
-	MacKey     string `json:"mac"  url:"mac"`
+	AppID       int    `json:"app_id" url:"app_id"`
+	AppTransID  string `json:"app_trans_id" url:"app_trans_id"`
+	BindingType string `json:"binding_type" url:"binding_type"`
+	ReqDate     int64  `json:"req_date"  url:"req_date"`
+	MacKey      string `json:"mac"  url:"mac"`
 }
 
 type QueryBindingResponse struct {
@@ -60,6 +61,7 @@ type PayByTokenRequest struct {
 	Identifier   string `json:"identifier" url:"identifier"`
 	ZpTransToken string `json:"zp_trans_token" url:"zp_trans_token"`
 	PayToken     string `json:"pay_token" url:"pay_token"`
+	BindingType  string `json:"binding_type" url:"binding_type"`
 	RedirectUrl  int    `json:"redirect_url" url:"redirect_url"`
 	ReqDate      int64  `json:"req_date"  url:"req_date"`
 	MacKey       string `json:"mac"  url:"mac"`
@@ -70,6 +72,18 @@ type PayByTokenResponse struct {
 	Amount    int64  `json:"amount"`
 	ReformUrl string `json:"reform_url"`
 	ZpTransId string `json:"zp_trans_id	"`
+}
+
+type UnbindRequest struct {
+	AppID      int    `json:"app_id" url:"app_id"`
+	Identifier string `json:"identifier" url:"identifier"`
+	BindingId  string `json:"binding_id" url:"binding_id"`
+	ReqDate    int64  `json:"req_date"  url:"req_date"`
+	MacKey     string `json:"mac"  url:"mac"`
+}
+
+type UnbindResponse struct {
+	BaseResponse
 }
 
 type Data struct {
@@ -115,5 +129,9 @@ func (cor *QueryBalanceRequest) ToValues() (url.Values, error) {
 }
 
 func (cor *PayByTokenRequest) ToValues() (url.Values, error) {
+	return query.Values(cor)
+}
+
+func (cor *UnbindRequest) ToValues() (url.Values, error) {
 	return query.Values(cor)
 }

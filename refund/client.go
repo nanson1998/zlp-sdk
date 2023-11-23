@@ -53,14 +53,9 @@ func RefundOrder(req *CreateRefundRequest, isProduction bool) (*CreateRefundResp
 func QueryRefund(req *QueryRefundRequest, isProduction bool) (*QueryRefundResponse, error) {
 	t := helper.GetAppTime()
 	mac := helper.BuildMAC(req.MacKey, "|", req.AppID, req.MRefundID, t)
-	r := &QueryRefundRequest{
-		AppID:     req.AppID,
-		MRefundID: req.MRefundID,
-		MacKey:    mac,
-		Timestamp: t,
-	}
-
-	queryReq, err := r.ToValues()
+	req.MacKey = mac
+	req.Timestamp = t
+	queryReq, err := req.ToValues()
 	if err != nil {
 		return nil, err
 	}

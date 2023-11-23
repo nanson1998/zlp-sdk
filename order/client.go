@@ -59,14 +59,8 @@ func CreateOrder(req *CreateOrderRequest, isProduction bool) (*CreateOrderRespon
 
 func QueryOrder(req *QueryStatusRequest, isProduction bool) (*QueryStatusResponse, error) {
 	mac := helper.BuildMAC(req.MacKey, "|", req.AppID, req.AppTransID, req.MacKey)
-
-	r := &QueryStatusRequest{
-		AppID:      req.AppID,
-		AppTransID: req.AppTransID,
-		MacKey:     mac,
-	}
-
-	queryReq, err := r.ToValues()
+	req.MacKey = mac
+	queryReq, err := req.ToValues()
 	if err != nil {
 		return nil, err
 	}
